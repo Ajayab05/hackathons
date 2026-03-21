@@ -22,22 +22,21 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Set ECR URL
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          echo "ECR_URL=$ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com" >> $GITHUB_ENV
+
       - name: Build Images
         run: |
           docker build -t backend-app ./backend
           docker build -t frontend-app ./frontend
 
-      # ✅ FIXED INDENTATION
       - name: Tag & Push
         run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          ECR_URL=$ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com
-
-          # BACKEND
           docker tag backend-app:latest $ECR_URL/backend:latest
           docker push $ECR_URL/backend:latest
 
-          # FRONTEND
           docker tag frontend-app:latest $ECR_URL/frontend:latest
           docker push $ECR_URL/frontend:latest
 
@@ -45,3 +44,9 @@ jobs:
         run: |
           aws eks update-kubeconfig --name dev-eks --region ap-south-1
           kubectl apply -f k8s/
+
+      # 🔥 IMPORTANT (ensures latest image is used)
+      - name: Restart Deployments
+        run: |
+          kubectl rollout restart deployment backend
+          kubectl rollout restart deployment frontend
