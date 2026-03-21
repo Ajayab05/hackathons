@@ -34,12 +34,12 @@ jobs:
           ECR_URL=$ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com
 
           # BACKEND
-          docker tag backend-app:latest $ECR_URL/backend-app:latest
-          docker push $ECR_URL/backend-app:latest
+          docker tag backend-app:latest $ECR_URL/backend:latest
+          docker push $ECR_URL/backend:latest
 
           # FRONTEND
-          docker tag frontend-app:latest $ECR_URL/frontend-app:latest
-          docker push $ECR_URL/frontend-app:latest
+          docker tag frontend-app:latest $ECR_URL/frontend:latest
+          docker push $ECR_URL/frontend:latest
 
       - name: Deploy to EKS
         run: |
