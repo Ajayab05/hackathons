@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Banking App</title>
+</head>
+<body>
+  <h1>Frontend Service</h1>
+
+  <button onclick="callAPI()">Call Backend</button>
+  <p id="output"></p>
+
+  <script>
+    function callAPI() {
+      fetch("http://backend-service:5000/api/message")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("output").innerText = data.message;
+        })
+        .catch(err => {
+          document.getElementById("output").innerText = "Error connecting backend";
+        });
+    }
+  </script>
+</body>
+</html>
